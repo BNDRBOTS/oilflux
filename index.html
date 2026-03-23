@@ -33,9 +33,8 @@
             background: var(--bg);
             color: var(--fg);
             font-family: 'Space Mono', monospace;
-            overflow-x: hidden; /* Allows native vertical scroll tracking for the kinetic JS */
+            overflow-x: hidden; 
             overscroll-behavior: none;
-            /* Removed perspective: 1000px; which hijacks position:fixed containing blocks */
         }
 
         /* --- GPU RAYMARCH CANVAS --- */
@@ -45,6 +44,7 @@
             width: 100vw; height: 100vh;
             z-index: 0;
             pointer-events: none;
+            transform: translateZ(0); 
         }
 
         /* --- TACTICAL OVERLAYS --- */
@@ -52,12 +52,14 @@
             position: fixed; inset: 0;
             background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
             z-index: 1; pointer-events: none;
+            transform: translateZ(0); 
         }
 
         .vignette {
             position: fixed; inset: 0;
             background: radial-gradient(circle at center, transparent 10%, #000000 120%);
             z-index: 2; pointer-events: none;
+            transform: translateZ(0);
         }
 
         /* --- KINETIC CURSOR --- */
@@ -65,17 +67,19 @@
             position: fixed; top: 0; left: 0;
             width: 4px; height: 4px; background: var(--fg);
             border-radius: 50%; z-index: 100000; pointer-events: none;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) translateZ(0);
             transition: opacity 0.2s;
+            will-change: transform, opacity;
         }
         #cursor-ring {
             position: fixed; top: 0; left: 0;
             width: 32px; height: 32px;
             border: 1px solid rgba(255,255,255,0.3);
             border-radius: 50%; z-index: 99999; pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s var(--ease-surgical), height 0.3s var(--ease-surgical), border-color 0.3s, opacity 0.2s;
+            transform: translate(-50%, -50%) translateZ(0);
+            transition: width 0.3s var(--ease-surgical), height 0.3s var(--ease-surgical), border-color 0.3s, opacity 0.2s, background 0.3s;
             backdrop-filter: invert(10%);
+            will-change: width, height, transform, border-color, background;
         }
         body.hover-active #cursor-ring {
             width: 64px; height: 64px;
@@ -150,7 +154,7 @@
             z-index: 99995;
             display: flex; align-items: center; justify-content: center;
             opacity: 0; 
-            visibility: hidden; /* Hard render block */
+            visibility: hidden; 
             background: rgba(0, 0, 0, 0.4);
             transition: opacity 0.5s var(--ease-surgical), visibility 0.5s;
             padding: 4vw;
@@ -162,7 +166,7 @@
         }
 
         .modal-glass {
-            background: rgba(10, 10, 12, 0.92); /* Highly opaque fallback */
+            background: rgba(10, 10, 12, 0.92); 
             border: 2px solid var(--glass-border);
             border-radius: 24px;
             padding: 4rem;
@@ -236,7 +240,7 @@
             padding: 1.2rem 1.5rem;
             color: var(--fg);
             font-family: 'Space Mono', monospace;
-            font-size: 1rem; /* 16px prevents iOS zoom */
+            font-size: 1rem; 
             transition: all 0.3s;
             border-radius: 8px 8px 0 0;
             outline: none;
@@ -273,7 +277,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 15vh 0;
+            padding: 25vh 0;
             align-items: flex-start;
         }
 
@@ -301,6 +305,7 @@
             z-index: 6;
             text-shadow: 10px 10px 0px var(--accent-violet), 15px 15px 30px rgba(0,0,0,0.9);
             animation: breathFX 4s ease-in-out infinite alternate;
+            will-change: transform, filter;
         }
 
         .title-llc {
@@ -393,81 +398,122 @@
             box-shadow: 12px 12px 0px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
         }
 
+        /* --- SURGICAL REFORGE: ELITE PROJECT LIST --- */
         .project-list {
-            display: flex; flex-direction: column; gap: 3rem;
-            margin-top: 6rem; width: 100%;
+            display: flex; flex-direction: column; gap: 4rem;
+            margin-top: 5rem; width: 100%;
+            position: relative;
+            z-index: 2;
         }
 
         .project-row {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 2.5rem 3.5rem;
-            background: rgba(255,255,255,0.02);
-            border: 2px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
+            padding: 2.5rem 3rem;
+            background: rgba(10, 10, 12, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
             text-decoration: none; color: var(--fg);
             position: relative; overflow: hidden;
-            transition: all 0.4s var(--ease-surgical);
-            width: 85%;
-            backdrop-filter: blur(10px);
+            transition: all 0.6s var(--ease-surgical);
+            width: 100%;
+            backdrop-filter: blur(24px) saturate(130%);
+            -webkit-backdrop-filter: blur(24px) saturate(130%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
         }
 
-        .project-row:nth-child(odd) {
-            align-self: flex-start;
-            border-left: 6px solid var(--accent-cyan);
-            transform: rotate(-1deg);
-        }
-        
-        .project-row:nth-child(even) {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-            text-align: right;
-            border-right: 6px solid var(--accent-violet);
-            transform: rotate(1deg);
+        /* Refined soft sweep overlay on hover */
+        .project-row::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: translateX(-100%) skewX(-15deg); 
+            transition: transform 0.8s var(--ease-surgical);
+            pointer-events: none;
         }
 
         .project-row:hover {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.2);
-            transform: translateX(20px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            z-index: 2;
+            background: rgba(18, 18, 22, 0.65);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1);
+            z-index: 10;
+        }
+        
+        .project-row:nth-child(odd):hover { border-color: rgba(212, 255, 0, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(212, 255, 0, 0.08), inset 0 1px 2px rgba(212, 255, 0, 0.2); }
+        .project-row:nth-child(even):hover { border-color: rgba(255, 0, 85, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 40px rgba(255, 0, 85, 0.08), inset 0 1px 2px rgba(255, 0, 85, 0.2); }
+        
+        .project-row:hover::before { transform: translateX(200%) skewX(-15deg); }
+
+        .project-info {
+            display: flex; align-items: baseline; gap: 2.5rem;
+            position: relative; z-index: 2;
         }
 
-        .project-row:nth-child(even):hover { transform: translateX(-20px) scale(1.02); }
+        .project-num {
+            font-family: 'Space Mono', monospace; 
+            font-size: 1rem; 
+            color: rgba(255,255,255,0.25); 
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            transition: color 0.4s var(--ease-surgical);
+        }
 
         .project-row h3 { 
-            font-family: 'Permanent Marker', cursive; 
-            font-size: clamp(2.5rem, 5vw, 5rem); 
-            font-weight: 400; 
-            letter-spacing: 0.02em; 
+            font-family: 'Space Mono', monospace; 
+            font-size: clamp(1.8rem, 4vw, 3.5rem); 
+            font-weight: 700; 
+            letter-spacing: -0.03em; 
             color: var(--fg);
             text-transform: uppercase;
-            transition: color 0.3s, text-shadow 0.3s;
+            line-height: 1.1;
+            transition: color 0.4s var(--ease-surgical), transform 0.4s var(--ease-surgical);
+            transform-origin: left center;
         }
-        .project-row:nth-child(odd):hover h3 { color: var(--accent-cyan); text-shadow: 4px 4px 0px var(--accent-violet); }
-        .project-row:nth-child(even):hover h3 { color: var(--accent-violet); text-shadow: 4px 4px 0px var(--accent-cyan); }
+
+        .project-row:nth-child(odd):hover .project-num { color: var(--accent-cyan); }
+        .project-row:nth-child(even):hover .project-num { color: var(--accent-violet); }
+
+        .project-row:nth-child(odd):hover h3 { color: var(--accent-cyan); transform: translateX(5px); }
+        .project-row:nth-child(even):hover h3 { color: var(--accent-violet); transform: translateX(5px); }
 
         .project-row .arrow { 
-            width: 70px; height: 70px;
-            border: 2px solid rgba(255,255,255,0.2);
+            width: 60px; height: 60px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem;
-            transition: background 0.4s, border-color 0.4s, transform 0.4s, color 0.4s;
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.5s var(--ease-surgical);
+            position: relative; z-index: 2;
         }
+        
         .project-row:hover .arrow {
-            background: var(--fg); color: #000; transform: rotate(45deg);
+            color: #000; transform: rotate(45deg) scale(1.1);
         }
+        
+        .project-row:nth-child(odd):hover .arrow { background: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 25px rgba(212,255,0,0.4); }
+        .project-row:nth-child(even):hover .arrow { background: var(--accent-violet); border-color: var(--accent-violet); box-shadow: 0 0 25px rgba(255,0,85,0.4); }
 
         .mag-wrap { position: relative; display: inline-block; width: 100%; max-width: 400px; }
 
-        footer { padding: 8rem 0 4rem; border-top: 4px solid var(--accent-cyan); margin-top: 10vh; }
+        footer { padding: 12rem 0 6rem; border-top: 4px solid var(--accent-cyan); margin-top: 20vh; }
         
         @media (max-width: 768px) {
             .hero-subtitle { margin-left: 0; margin-top: 2rem; }
-            .project-row { width: 100%; flex-direction: column !important; align-items: flex-start; padding: 2rem; gap: 1rem; text-align: left !important; transform: none !important; }
-            .project-row:nth-child(even) { border-right: none; border-left: 6px solid var(--accent-violet); }
-            .project-row:hover { transform: translateY(-5px) !important; }
+            
+            .project-row { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                padding: 2.5rem 2rem; 
+                gap: 2rem; 
+                border-radius: 16px;
+                backdrop-filter: blur(15px) saturate(120%);
+                -webkit-backdrop-filter: blur(15px) saturate(120%);
+            }
+            .project-info { flex-direction: column; gap: 0.5rem; }
+            .project-row .arrow { align-self: flex-end; width: 50px; height: 50px; font-size: 1.2rem; }
+            .project-row:hover { transform: translateY(-3px); }
+            
             footer > div { grid-template-columns: 1fr !important; }
             .modal-glass { padding: 2rem; }
         }
@@ -540,27 +586,42 @@
 
             <section id="work">
                 <div class="label-tag mono">In Progress</div>
-                <h2 style="font-family: 'Permanent Marker', cursive; font-size: 4rem; color: var(--accent-cyan); transform: rotate(-2deg); margin-bottom: 2rem;">Deployed Artifacts</h2>
+                <h2 style="font-family: 'Permanent Marker', cursive; font-size: 4rem; color: var(--accent-cyan); transform: rotate(-2deg); margin-bottom: 1rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.8);">Deployed Artifacts</h2>
                 
                 <div class="project-list">
                     <a href="https://bndrbots.github.io/resourcecite/#home" target="_blank" class="project-row" data-hover>
-                        <div><span class="mono" style="color: rgba(255,255,255,0.5);">001</span><h3>ResourceCite</h3></div>
+                        <div class="project-info">
+                            <span class="project-num">001</span>
+                            <h3>ResourceCite</h3>
+                        </div>
                         <div class="arrow mono">↗</div>
                     </a>
                     <a href="https://bndrbots.github.io/crystal_love/" target="_blank" class="project-row" data-hover>
-                        <div><span class="mono" style="color: rgba(255,255,255,0.5);">002</span><h3>Crystal Love</h3></div>
+                        <div class="project-info">
+                            <span class="project-num">002</span>
+                            <h3>Crystal Love</h3>
+                        </div>
                         <div class="arrow mono">↗</div>
                     </a>
                     <a href="https://bndrbots.github.io/sport_formal/" target="_blank" class="project-row" data-hover>
-                        <div><span class="mono" style="color: rgba(255,255,255,0.5);">003</span><h3>Sport Formal</h3></div>
+                        <div class="project-info">
+                            <span class="project-num">003</span>
+                            <h3>Sport Formal</h3>
+                        </div>
                         <div class="arrow mono">↗</div>
                     </a>
                     <a href="https://bndrbots.github.io/CRYSTAL-GATE/" target="_blank" class="project-row" data-hover>
-                        <div><span class="mono" style="color: rgba(255,255,255,0.5);">004</span><h3>Crystal Gate</h3></div>
+                        <div class="project-info">
+                            <span class="project-num">004</span>
+                            <h3>Crystal Gate</h3>
+                        </div>
                         <div class="arrow mono">↗</div>
                     </a>
                     <a href="https://bndrbots.github.io/immersion/" target="_blank" class="project-row" data-hover>
-                        <div><span class="mono" style="color: rgba(255,255,255,0.5);">005</span><h3>Immersion</h3></div>
+                        <div class="project-info">
+                            <span class="project-num">005</span>
+                            <h3>Immersion</h3>
+                        </div>
                         <div class="arrow mono">↗</div>
                     </a>
                 </div>
@@ -648,8 +709,9 @@
             p.xz *= rot(u_time * 0.1 + inputVector.x * 2.0);
             p.yz *= rot(u_time * 0.05 + u_scroll * 0.002 - inputVector.y * 2.0);
             
-            float core = length(p) - (1.8 + u_audio_low * 0.05); 
-            float n = fbm(p * 1.5 + u_time * 0.2) * (1.2 + u_audio_low * 0.15);
+            // ELITE REFORGE: Shifted pulse from chaotic geometry destruction to a smooth spatial swell.
+            float core = length(p) - (1.8 + u_audio_low * 0.08); 
+            float n = fbm(p * 1.5 + u_time * 0.2) * (1.2 + u_audio_low * 0.2);
             float veloSpike = u_velo * 0.01 * noise(p * 5.0);
             
             return core + n + veloSpike;
@@ -685,11 +747,11 @@
             float max_t = 15.0;
             vec3 p;
             
-            for(int i = 0; i < 70; i++) {
+            for(int i = 0; i < 45; i++) {
                 p = ro + rd * t;
                 float d = map(p);
-                if(d < 0.001 || t > max_t) break;
-                t += d * 0.6; 
+                if(d < 0.002 || t > max_t) break;
+                t += d * 0.75; 
             }
             
             vec3 starColor = vec3(0.8, 0.9, 1.0) * stars(rd);
@@ -706,18 +768,20 @@
                 float fresnel = pow(1.0 - max(dot(n, v), 0.0), 3.0);
                 
                 vec3 baseColor = vec3(0.01, 0.0, 0.02);
-                vec3 cyanGlow = vec3(0.8, 1.0, 0.0) * fresnel * 2.5; 
-                vec3 violetGlow = vec3(1.0, 0.0, 0.33) * max(dot(n, l2), 0.0) * 2.0; 
+                
+                // ELITE REFORGE: Color emission absorbs the high-voltage energy smoothly.
+                vec3 cyanGlow = vec3(0.8, 1.0, 0.0) * fresnel * (2.5 + u_audio_low * 1.5); 
+                vec3 violetGlow = vec3(1.0, 0.0, 0.33) * max(dot(n, l2), 0.0) * (2.0 + u_audio_high * 1.0); 
                 
                 vec3 objCol = baseColor * dif + cyanGlow + violetGlow;
                 
                 float spec = pow(max(dot(n, normalize(l1 + v)), 0.0), 32.0);
                 objCol += spec * vec3(1.0);
                 
-                // Micro electro-pulses matching high frequencies (snares/hats)
-                float microCracks = smoothstep(0.04, 0.0, abs(noise(p * 8.0 - u_time * 3.0)));
-                vec3 electroColor = vec3(0.6, 1.0, 0.9) * microCracks * u_audio_high * 1.8;
-                objCol += electroColor * fresnel; // Masked to edges to prevent blowout
+                // ELITE REFORGE: Lowered noise frequency on microcracks for fluid plasma flow vs static television glitching
+                float microCracks = smoothstep(0.04, 0.0, abs(noise(p * 4.0 - u_time * 2.0)));
+                vec3 electroColor = vec3(0.5, 1.0, 0.8) * microCracks * u_audio_high * 2.5;
+                objCol += electroColor * fresnel;
                 
                 col = mix(objCol, col, 1.0 - exp(-0.05 * t * t));
             }
@@ -726,7 +790,7 @@
         }
     </script>
 
-    <!-- SURGICAL AUDIO SYNTHESIS: ANALOG MODELING -->
+    <!-- SURGICAL AUDIO SYNTHESIS & SYSTEM KINETICS -->
     <script>
         class AudioEngine {
             constructor() {
@@ -738,9 +802,8 @@
                 this.totalSteps = 0;
                 this.timerID = null;
                 this.noiseBuffer = null;
-                this.pulse = { low: 0, high: 0 }; // Deterministic visual bridging
+                this.pulse = { low: 0, high: 0 }; 
                 
-                // Persistent Bass Synth Nodes
                 this.bassOscSub = null;
                 this.bassOscMid = null;
                 this.bassOscHigh = null;
@@ -749,8 +812,6 @@
                 this.bassGain = null;
             }
 
-            // Custom non-linear distortion curve (Tanh mathematical approximation)
-            // This adds harmonic warmth to clinical digital oscillators, avoiding the "MIDI" sound.
             makeDistortionCurve(amount) {
                 let k = typeof amount === 'number' ? amount : 50;
                 let n_samples = 44100;
@@ -770,7 +831,6 @@
                     this.masterGain = this.ctx.createGain();
                     this.masterGain.gain.value = 0.85;
 
-                    // Generate White Noise Buffer for premium analog hats/snares
                     const bufferSize = this.ctx.sampleRate * 2.0;
                     this.noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
                     const output = this.noiseBuffer.getChannelData(0);
@@ -778,12 +838,10 @@
                         output[i] = Math.random() * 2 - 1;
                     }
 
-                    // Non-Linear Saturation (Analog Warmth)
                     this.waveshaper = this.ctx.createWaveShaper();
                     this.waveshaper.curve = this.makeDistortionCurve(15);
                     this.waveshaper.oversample = '4x';
                     
-                    // Master Bus Compression (Glue)
                     this.compressor = this.ctx.createDynamicsCompressor();
                     this.compressor.threshold.value = -24;
                     this.compressor.knee.value = 12;
@@ -791,20 +849,16 @@
                     this.compressor.attack.value = 0.003;
                     this.compressor.release.value = 0.25;
 
-                    // EQ - Rolling off muddy mids, lifting extreme lows
                     this.masterEQ = this.ctx.createBiquadFilter();
                     this.masterEQ.type = 'lowshelf';
                     this.masterEQ.frequency.value = 80;
-                    this.masterEQ.gain.value = 4; // Boost the deep cinematic lows
+                    this.masterEQ.gain.value = 4;
 
-                    // Signal Flow: Gain -> Saturation -> EQ -> Compression -> Out
                     this.masterGain.connect(this.waveshaper);
                     this.waveshaper.connect(this.masterEQ);
                     this.masterEQ.connect(this.compressor);
                     this.compressor.connect(this.ctx.destination);
 
-                    // --- PERSISTENT SEAMLESS BASS SYNTH ---
-                    // Three stacked octaves blending into a massive, single drone
                     this.bassOscSub = this.ctx.createOscillator();
                     this.bassOscSub.type = 'sine';
                     this.bassOscMid = this.ctx.createOscillator();
@@ -833,7 +887,6 @@
                     this.bassOscMid.start();
                     this.bassOscHigh.start();
                     
-                    // Initial target lock
                     this.bassOscSub.frequency.value = 58.27 / 2;
                     this.bassOscMid.frequency.value = 58.27;
                     this.bassOscHigh.frequency.value = 58.27 * 2;
@@ -842,7 +895,6 @@
                 this.isPlaying = true;
                 this.nextNoteTime = this.ctx.currentTime + 0.1;
                 
-                // Force sync to downbeat
                 this.current16thNote = 0;
                 this.totalSteps = 0;
                 
@@ -865,19 +917,15 @@
                 if (this.current16thNote === 16) this.current16thNote = 0;
             }
 
-            // The Cinematic Thud (Physics-modeled pitch dive)
             playKick(time) {
-                this.pulse.low = 1.0; // Trigger visual pulse
+                this.pulse.low = 1.0; 
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 
                 osc.type = 'sine';
-                
-                // Pitch Envelope: 150Hz -> 30Hz dive creates the physical "smack"
                 osc.frequency.setValueAtTime(150, time);
                 osc.frequency.exponentialRampToValueAtTime(30, time + 0.08);
                 
-                // Amp Envelope: Punchy decay
                 gain.gain.setValueAtTime(1.0, time);
                 gain.gain.setTargetAtTime(0.001, time + 0.02, 0.1); 
                 
@@ -888,10 +936,8 @@
                 osc.stop(time + 0.5);
             }
 
-            // Premium Staccato Snare (Modeled wire snap + resonant body)
             playSnare(time) {
-                this.pulse.high = 1.0; // Trigger high pulse
-                // Crisp analog noise snap (The Wires)
+                this.pulse.high = 1.0; 
                 const noise = this.ctx.createBufferSource();
                 noise.buffer = this.noiseBuffer;
                 const noiseFilter = this.ctx.createBiquadFilter();
@@ -901,13 +947,12 @@
                 
                 const noiseGain = this.ctx.createGain();
                 noiseGain.gain.setValueAtTime(0.8, time);
-                noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12); // Hyper-staccato
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12); 
                 
                 noise.connect(noiseFilter);
                 noiseFilter.connect(noiseGain);
                 noiseGain.connect(this.masterGain);
 
-                // Punchy resonant body (The Drum Head)
                 const osc = this.ctx.createOscillator();
                 osc.type = 'triangle'; 
                 const oscGain = this.ctx.createGain();
@@ -925,9 +970,8 @@
                 noise.stop(time + 0.2); osc.stop(time + 0.2);
             }
 
-            // High-pass Analog Hi-Hats (Staccato)
             playHat(time, vol) {
-                this.pulse.high = Math.max(this.pulse.high, vol * 3.0); // Micro pulse
+                this.pulse.high = Math.max(this.pulse.high, vol * 3.0); 
                 const noise = this.ctx.createBufferSource();
                 noise.buffer = this.noiseBuffer;
                 const hp = this.ctx.createBiquadFilter();
@@ -936,7 +980,7 @@
                 
                 const gain = this.ctx.createGain();
                 gain.gain.setValueAtTime(vol, time);
-                gain.gain.setTargetAtTime(0.001, time + 0.01, 0.02); // Extreme staccato decay
+                gain.gain.setTargetAtTime(0.001, time + 0.01, 0.02); 
 
                 noise.connect(hp);
                 hp.connect(gain);
@@ -946,50 +990,40 @@
                 noise.stop(time + 0.05);
             }
 
-            // Seamless Portamento Bass Trigger
             setBassFrequency(time, freq) {
-                const glideTime = 0.15; // 150ms glide for seamless switch
+                const glideTime = 0.15; 
+                this.bassOscSub.frequency.setTargetAtTime(freq / 2, time, glideTime); 
+                this.bassOscMid.frequency.setTargetAtTime(freq, time, glideTime);     
+                this.bassOscHigh.frequency.setTargetAtTime((freq * 2) + 0.5, time, glideTime); 
                 
-                // Stacked Octaves holding perfectly together
-                this.bassOscSub.frequency.setTargetAtTime(freq / 2, time, glideTime); // Sub Octave
-                this.bassOscMid.frequency.setTargetAtTime(freq, time, glideTime);     // Root
-                this.bassOscHigh.frequency.setTargetAtTime((freq * 2) + 0.5, time, glideTime); // High Octave (slight detune for width)
-                
-                // Filter envelope for rhythm "pump"
                 this.bassFilter.frequency.setValueAtTime(400, time);
                 this.bassFilter.frequency.exponentialRampToValueAtTime(90, time + 0.5);
                 
-                // Keep gain high during playing
                 this.bassGain.gain.setTargetAtTime(0.7, time, 0.05);
             }
 
             scheduleNote(beat, time) {
                 const step32 = this.totalSteps % 32;
 
-                // Kick: boom-boom-BAP, boom-boom/boom-boom - BAP
                 if (step32 === 0 || step32 === 2 || step32 === 16 || step32 === 18 || step32 === 20 || step32 === 22) {
                     this.playKick(time);
                 }
-
-                // Snare: BAP
                 if (step32 === 8 || step32 === 24) {
                     this.playSnare(time);
                 }
 
-                // Hats: Staccato on all 16ths with humanized velocity
                 const isAccent = (beat % 4 === 0);
                 const isOffbeat = (beat % 2 !== 0);
                 const hatVelocity = isAccent ? 0.25 : (isOffbeat ? 0.08 : 0.15);
                 this.playHat(time, hatVelocity);
 
-                // Bassline: Seamless portamento progression across 3 tones
                 const step64 = this.totalSteps % 64;
                 if (step64 === 0) {
-                    this.setBassFrequency(time, 58.27); // Tone 1: Bb1 (IV) - Acoustic Sweet Spot
+                    this.setBassFrequency(time, 58.27); 
                 } else if (step64 === 32) {
-                    this.setBassFrequency(time, 65.41); // Tone 2: C2 (V) - Remains Exact
+                    this.setBassFrequency(time, 65.41); 
                 } else if (step64 === 48) {
-                    this.setBassFrequency(time, 87.31); // Tone 3: F2 (I) - Remains Exact
+                    this.setBassFrequency(time, 87.31); 
                 }
             }
 
@@ -1003,16 +1037,16 @@
         }
 
         const sys = {
-            scroll: { current: 0, target: 0, ease: 0.08, velo: 0, scale: 1.0 },
+            scroll: { current: 0, target: 0, ease: 0.1, velo: 0, scale: 1.0 },
             mouse: { x: 0, y: 0, tx: 0, ty: 0 },
             gyro: { x: 0, y: 0, tx: 0, ty: 0, active: false }, 
             screen: { w: window.innerWidth, h: window.innerHeight },
             time: { start: Date.now(), delta: 0, last: Date.now() },
-            audio: new AudioEngine()
+            audio: new AudioEngine(),
+            visualPulse: { low: 0, high: 0 } // ELITE REFORGE: Interpolator Bridge for smooth breathing shader data
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Audio System Switch
             const ioSwitch = document.getElementById('io-switch');
             ioSwitch.addEventListener('click', () => {
                 const isPressed = ioSwitch.getAttribute('aria-pressed') === 'true';
@@ -1025,7 +1059,6 @@
                 }
             });
 
-            // Bulletproof Modal Logic
             const btnTrigger = document.getElementById('btn-trigger-modal');
             const btnClose = document.getElementById('btn-close-modal');
             const modal = document.getElementById('contact-modal');
@@ -1045,7 +1078,6 @@
                 if(e.target === modal) closeModal();
             });
 
-            // FormSubmit AJAX
             const intakeForm = document.getElementById('main-intake-form');
             intakeForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -1089,7 +1121,6 @@
                 el.addEventListener('mouseleave', () => document.body.classList.remove('input-hover'));
             });
 
-            // Gyroscope Hardware Integration Preserved Strictly
             const handleGyro = (event) => {
                 if(!event.beta || !event.gamma) return;
                 sys.gyro.active = true;
@@ -1102,7 +1133,6 @@
                 } else window.addEventListener('deviceorientation', handleGyro);
             }, { once: true });
 
-            // WebGL Initialization
             const canvas = document.getElementById('glcanvas');
             const gl = canvas.getContext('webgl', { alpha: false, antialias: false });
             if (gl) {
@@ -1157,14 +1187,14 @@
                     gl.uniform1f(uScroll, sys.scroll.current);
                     gl.uniform1f(uVelo, Math.abs(sys.scroll.velo));
                     
-                    gl.uniform1f(uAudioLow, sys.audio.pulse.low);
-                    gl.uniform1f(uAudioHigh, sys.audio.pulse.high);
+                    // ELITE REFORGE: Feed the smoothed interpolation data to GPU, not raw jittery audio peaks
+                    gl.uniform1f(uAudioLow, sys.visualPulse.low);
+                    gl.uniform1f(uAudioHigh, sys.visualPulse.high);
                     
                     gl.drawArrays(gl.TRIANGLES, 0, 6);
                 };
             }
 
-            // Interface Kinetics
             const wrapper = document.getElementById('smooth-wrapper');
             const dot = document.getElementById('cursor-dot');
             const ring = document.getElementById('cursor-ring');
@@ -1174,7 +1204,7 @@
             window.addEventListener('mousemove', (e) => {
                 sys.mouse.tx = e.clientX; sys.mouse.ty = e.clientY;
                 cx = e.clientX; cy = e.clientY;
-                dot.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%))`;
+                dot.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%)) translateZ(0)`;
             });
             
             document.querySelectorAll('.mag-wrap').forEach(wrap => {
@@ -1193,25 +1223,44 @@
             });
 
             const setHeight = () => { document.body.style.height = `${wrapper.getBoundingClientRect().height}px`; };
-            window.addEventListener('resize', setHeight);
-            window.addEventListener('scroll', () => { sys.scroll.target = window.scrollY; });
-            setTimeout(setHeight, 500);
+            if (window.ResizeObserver) {
+                const ro = new ResizeObserver(setHeight);
+                ro.observe(wrapper);
+            } else {
+                window.addEventListener('resize', setHeight);
+                setTimeout(setHeight, 500);
+            }
+            
+            window.addEventListener('scroll', () => { 
+                sys.scroll.target = window.scrollY; 
+            }, { passive: true });
             
             const loop = () => {
+                // HARD CLAMP: Prevent iOS/macOS rubber-band values from bleeding into the logic
+                const maxScroll = Math.max(0, wrapper.getBoundingClientRect().height - window.innerHeight);
+                sys.scroll.target = Math.max(0, Math.min(sys.scroll.target, maxScroll));
+
                 const prev = sys.scroll.current;
                 sys.scroll.current += (sys.scroll.target - sys.scroll.current) * sys.scroll.ease;
+                
+                // ABSOLUTE VISUAL CLAMP: Guarantee the matrix transform never exceeds document boundaries
+                sys.scroll.current = Math.max(0, Math.min(sys.scroll.current, maxScroll));
                 sys.scroll.velo = sys.scroll.current - prev;
                 
-                // Decay audio pulses cleanly and deterministically
-                sys.audio.pulse.low += (0.0 - sys.audio.pulse.low) * 0.1;
-                sys.audio.pulse.high += (0.0 - sys.audio.pulse.high) * 0.15;
+                // ELITE REFORGE: 1. Audio data decays natively
+                sys.audio.pulse.low += (0.0 - sys.audio.pulse.low) * 0.08;
+                sys.audio.pulse.high += (0.0 - sys.audio.pulse.high) * 0.12;
+                
+                // ELITE REFORGE: 2. Visual rendering data chases the audio data with an ease to prevent snapping. Smooth swell, crisp decay.
+                sys.visualPulse.low += (sys.audio.pulse.low - sys.visualPulse.low) * 0.25;
+                sys.visualPulse.high += (sys.audio.pulse.high - sys.visualPulse.high) * 0.3;
                 
                 if (!document.body.classList.contains('modal-open')) {
                     wrapper.style.transform = `translate3d(0, ${-sys.scroll.current}px, 0)`;
                 }
                 
                 rx += (cx - rx) * 0.15; ry += (cy - ry) * 0.15;
-                ring.style.transform = `translate(calc(${rx}px - 50%), calc(${ry}px - 50%))`;
+                ring.style.transform = `translate(calc(${rx}px - 50%), calc(${ry}px - 50%)) translateZ(0)`;
                 
                 if(sys.renderGL) sys.renderGL();
                 requestAnimationFrame(loop);

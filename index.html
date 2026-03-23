@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BNDR LLC | BNDR LLC | Immersive Web Designs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <title>BNDR LLC | Immersive Web Designs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
         :root {
             --bg: #000000;
             --fg: #ffffff;
-            --accent-cyan: #d4ff00; /* Hyper Neon Yellow/Cyan */
-            --accent-violet: #ff0055; /* Deep Streetwear Magenta */
+            --accent-cyan: #d4ff00;
+            --accent-violet: #ff0055;
             --glass-border: rgba(255, 255, 255, 0.08);
             --ease-surgical: cubic-bezier(0.19, 1, 0.22, 1);
         }
@@ -26,7 +26,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- SURGICAL OVERRIDE: ROOT CONTAINING BLOCK FIX --- */
+        /* --- SURGICAL OVERRIDE: PURE NATIVE SCROLL --- */
         body, html {
             width: 100%;
             min-height: 100vh;
@@ -34,14 +34,17 @@
             color: var(--fg);
             font-family: 'Space Mono', monospace;
             overflow-x: hidden; 
-            overscroll-behavior: none;
+        }
+
+        body.modal-open {
+            overflow: hidden; /* Locks native scroll cleanly */
         }
 
         /* --- GPU RAYMARCH CANVAS --- */
         #glcanvas {
             position: fixed;
             top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            width: 100vw; height: 100dvh;
             z-index: 0;
             pointer-events: none;
             transform: translateZ(0); 
@@ -50,6 +53,7 @@
         /* --- TACTICAL OVERLAYS --- */
         .noise-layer {
             position: fixed; inset: 0;
+            height: 100dvh;
             background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
             z-index: 1; pointer-events: none;
             transform: translateZ(0); 
@@ -57,6 +61,7 @@
 
         .vignette {
             position: fixed; inset: 0;
+            height: 100dvh;
             background: radial-gradient(circle at center, transparent 10%, #000000 120%);
             z-index: 2; pointer-events: none;
             transform: translateZ(0);
@@ -93,7 +98,7 @@
         /* --- HARDWARE I/O SWITCH --- */
         .io-container {
             position: fixed;
-            top: 5vh; right: 4vw;
+            top: 5dvh; right: 4vw;
             z-index: 9001;
             display: flex;
             flex-direction: column;
@@ -136,21 +141,21 @@
 
         /* --- SCROLL ARCHITECTURE --- */
         #smooth-wrapper {
-            position: absolute; top: 0; left: 0;
-            width: 100%; will-change: transform, filter, opacity;
+            position: relative; /* Restored document flow */
+            width: 100%; 
             z-index: 10;
-            transform-origin: center top;
             transition: filter 0.6s var(--ease-surgical), transform 0.6s var(--ease-surgical);
         }
         body.modal-open #smooth-wrapper {
             filter: blur(15px) brightness(0.3) saturate(80%);
-            transform: scale(0.97) translateY(-2vh) !important;
+            transform: scale(0.97);
             pointer-events: none;
         }
 
         /* --- BULLETPROOF MODAL SYSTEM --- */
         #contact-modal {
             position: fixed; inset: 0;
+            height: 100dvh;
             z-index: 99995;
             display: flex; align-items: center; justify-content: center;
             opacity: 0; 
@@ -171,7 +176,7 @@
             border-radius: 24px;
             padding: 4rem;
             width: 100%; max-width: 650px;
-            max-height: 90vh; overflow-y: auto;
+            max-height: 90dvh; overflow-y: auto;
             backdrop-filter: blur(30px) saturate(150%);
             -webkit-backdrop-filter: blur(30px) saturate(150%);
             box-shadow: 0 40px 100px rgba(0,0,0,0.99), inset 0 2px 0 rgba(255,255,255,0.05);
@@ -273,11 +278,11 @@
 
         section {
             position: relative;
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 25vh 0;
+            padding: 25dvh 0;
             align-items: flex-start;
         }
 
@@ -421,7 +426,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
         }
 
-        /* Refined soft sweep overlay on hover */
         .project-row::before {
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
@@ -496,7 +500,7 @@
 
         .mag-wrap { position: relative; display: inline-block; width: 100%; max-width: 400px; }
 
-        footer { padding: 12rem 0 6rem; border-top: 4px solid var(--accent-cyan); margin-top: 20vh; }
+        footer { padding: 12rem 0 6rem; border-top: 4px solid var(--accent-cyan); margin-top: 20dvh; }
         
         @media (max-width: 768px) {
             .hero-subtitle { margin-left: 0; margin-top: 2rem; }
@@ -565,7 +569,6 @@
 
     <div id="smooth-wrapper">
         <div class="container">
-            
             <section id="hero">
                 <div class="label-tag mono">BNDR 30-day Unlimited™: 30 days. Endless Revisions + Truly Custom Marketing Materials + More On Demand. </div>
                 
@@ -586,7 +589,7 @@
 
             <section id="work">
                 <div class="label-tag mono">In Progress</div>
-                <h2 style="font-family: 'Permanent Marker', cursive; font-size: 4rem; color: var(--accent-cyan); transform: rotate(-2deg); margin-bottom: 1rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.8);">Deployed Artifacts</h2>
+                <h2 style="font-family: 'Permanent Marker', cursive; font-size: 4rem; color: var(--accent-cyan); transform: rotate(-2deg); margin-bottom: 1rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.8);">Current Projects</h2>
                 
                 <div class="project-list">
                     <a href="https://bndrbots.github.io/resourcecite/#home" target="_blank" class="project-row" data-hover>
@@ -640,7 +643,7 @@
                     </div>
                     <div class="glass-panel">
                         <div class="mono" style="font-size: 0.95rem; line-height: 1.8;">
-                            <p style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 1rem; font-size: 1.2rem;">HQ Coordinates</p>
+                            <p style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 1rem; font-size: 1.2rem;">HQ</p>
                             <p>BNDR LLC</p>
                             <p>1896 East Innovation Park Drive, STE 100</p>
                             <p>Oro Valley, AZ 85755</p>
@@ -649,7 +652,6 @@
                     </div>
                 </div>
             </footer>
-
         </div>
     </div>
 
@@ -676,6 +678,7 @@
                      dot(p,vec3(113.5,271.9,124.6)));
             return -1.0 + 2.0*fract(sin(p)*43758.5453123);
         }
+        
         float noise(vec3 p) {
             vec3 i = floor(p);
             vec3 f = fract(p);
@@ -709,7 +712,6 @@
             p.xz *= rot(u_time * 0.1 + inputVector.x * 2.0);
             p.yz *= rot(u_time * 0.05 + u_scroll * 0.002 - inputVector.y * 2.0);
             
-            // ELITE REFORGE: Shifted pulse from chaotic geometry destruction to a smooth spatial swell.
             float core = length(p) - (1.8 + u_audio_low * 0.08); 
             float n = fbm(p * 1.5 + u_time * 0.2) * (1.2 + u_audio_low * 0.2);
             float veloSpike = u_velo * 0.01 * noise(p * 5.0);
@@ -768,17 +770,13 @@
                 float fresnel = pow(1.0 - max(dot(n, v), 0.0), 3.0);
                 
                 vec3 baseColor = vec3(0.01, 0.0, 0.02);
-                
-                // ELITE REFORGE: Color emission absorbs the high-voltage energy smoothly.
                 vec3 cyanGlow = vec3(0.8, 1.0, 0.0) * fresnel * (2.5 + u_audio_low * 1.5); 
                 vec3 violetGlow = vec3(1.0, 0.0, 0.33) * max(dot(n, l2), 0.0) * (2.0 + u_audio_high * 1.0); 
-                
                 vec3 objCol = baseColor * dif + cyanGlow + violetGlow;
                 
                 float spec = pow(max(dot(n, normalize(l1 + v)), 0.0), 32.0);
                 objCol += spec * vec3(1.0);
                 
-                // ELITE REFORGE: Lowered noise frequency on microcracks for fluid plasma flow vs static television glitching
                 float microCracks = smoothstep(0.04, 0.0, abs(noise(p * 4.0 - u_time * 2.0)));
                 vec3 electroColor = vec3(0.5, 1.0, 0.8) * microCracks * u_audio_high * 2.5;
                 objCol += electroColor * fresnel;
@@ -792,6 +790,8 @@
 
     <!-- SURGICAL AUDIO SYNTHESIS & SYSTEM KINETICS -->
     <script>
+        "use strict";
+
         class AudioEngine {
             constructor() {
                 this.ctx = null;
@@ -803,7 +803,6 @@
                 this.timerID = null;
                 this.noiseBuffer = null;
                 this.pulse = { low: 0, high: 0 }; 
-                
                 this.bassOscSub = null;
                 this.bassOscMid = null;
                 this.bassOscHigh = null;
@@ -813,21 +812,20 @@
             }
 
             makeDistortionCurve(amount) {
-                let k = typeof amount === 'number' ? amount : 50;
-                let n_samples = 44100;
-                let curve = new Float32Array(n_samples);
-                let deg = Math.PI / 180;
+                const k = typeof amount === 'number' ? amount : 50;
+                const n_samples = 44100;
+                const curve = new Float32Array(n_samples);
+                const deg = Math.PI / 180;
                 for (let i = 0; i < n_samples; ++i) {
-                    let x = i * 2 / n_samples - 1;
+                    const x = i * 2 / n_samples - 1;
                     curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
                 }
                 return curve;
             }
 
             init() {
-                if(!this.ctx) {
+                if (!this.ctx) {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    
                     this.masterGain = this.ctx.createGain();
                     this.masterGain.gain.value = 0.85;
 
@@ -891,13 +889,12 @@
                     this.bassOscMid.frequency.value = 58.27;
                     this.bassOscHigh.frequency.value = 58.27 * 2;
                 }
-                if(this.ctx.state === 'suspended') this.ctx.resume();
+                
+                if (this.ctx.state === 'suspended') this.ctx.resume();
                 this.isPlaying = true;
                 this.nextNoteTime = this.ctx.currentTime + 0.1;
-                
                 this.current16thNote = 0;
                 this.totalSteps = 0;
-                
                 this.scheduler();
             }
 
@@ -912,9 +909,8 @@
             nextNote() {
                 const secondsPerBeat = 60.0 / this.tempo;
                 this.nextNoteTime += 0.25 * secondsPerBeat; 
-                this.current16thNote++;
+                this.current16thNote = (this.current16thNote + 1) % 16;
                 this.totalSteps++;
-                if (this.current16thNote === 16) this.current16thNote = 0;
             }
 
             playKick(time) {
@@ -998,7 +994,6 @@
                 
                 this.bassFilter.frequency.setValueAtTime(400, time);
                 this.bassFilter.frequency.exponentialRampToValueAtTime(90, time + 0.5);
-                
                 this.bassGain.gain.setTargetAtTime(0.7, time, 0.05);
             }
 
@@ -1043,52 +1038,56 @@
             screen: { w: window.innerWidth, h: window.innerHeight },
             time: { start: Date.now(), delta: 0, last: Date.now() },
             audio: new AudioEngine(),
-            visualPulse: { low: 0, high: 0 } // ELITE REFORGE: Interpolator Bridge for smooth breathing shader data
+            visualPulse: { low: 0, high: 0 },
+            renderGL: null
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            const ioSwitch = document.getElementById('io-switch');
-            ioSwitch.addEventListener('click', () => {
-                const isPressed = ioSwitch.getAttribute('aria-pressed') === 'true';
-                if (isPressed) {
-                    ioSwitch.setAttribute('aria-pressed', 'false');
-                    sys.audio.stop();
-                } else {
-                    ioSwitch.setAttribute('aria-pressed', 'true');
-                    sys.audio.init();
-                }
+            const dom = {
+                ioSwitch: document.getElementById('io-switch'),
+                btnTrigger: document.getElementById('btn-trigger-modal'),
+                btnClose: document.getElementById('btn-close-modal'),
+                modal: document.getElementById('contact-modal'),
+                intakeForm: document.getElementById('main-intake-form'),
+                inputs: document.querySelectorAll('input, textarea'),
+                canvas: document.getElementById('glcanvas'),
+                wrapper: document.getElementById('smooth-wrapper'),
+                dot: document.getElementById('cursor-dot'),
+                ring: document.getElementById('cursor-ring'),
+                magWraps: document.querySelectorAll('.mag-wrap'),
+                hoverEls: document.querySelectorAll('[data-hover]')
+            };
+
+            // I/O Toggle
+            dom.ioSwitch.addEventListener('click', () => {
+                const isPressed = dom.ioSwitch.getAttribute('aria-pressed') === 'true';
+                dom.ioSwitch.setAttribute('aria-pressed', isPressed ? 'false' : 'true');
+                isPressed ? sys.audio.stop() : sys.audio.init();
             });
 
-            const btnTrigger = document.getElementById('btn-trigger-modal');
-            const btnClose = document.getElementById('btn-close-modal');
-            const modal = document.getElementById('contact-modal');
+            // Modal Systems
+            const toggleModal = (state) => {
+                document.body.classList.toggle('modal-open', state);
+                dom.modal.classList.toggle('active', state);
+            };
             
-            const openModal = () => {
-                document.body.classList.add('modal-open');
-                modal.classList.add('active');
-            };
-            const closeModal = () => {
-                document.body.classList.remove('modal-open');
-                modal.classList.remove('active');
-            };
-
-            btnTrigger.addEventListener('click', openModal);
-            btnClose.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if(e.target === modal) closeModal();
+            dom.btnTrigger.addEventListener('click', () => toggleModal(true));
+            dom.btnClose.addEventListener('click', () => toggleModal(false));
+            dom.modal.addEventListener('click', (e) => {
+                if (e.target === dom.modal) toggleModal(false);
             });
 
-            const intakeForm = document.getElementById('main-intake-form');
-            intakeForm.addEventListener('submit', async (e) => {
+            // Form Logic
+            dom.intakeForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const submitBtn = intakeForm.querySelector('.submit-btn');
+                const submitBtn = dom.intakeForm.querySelector('.submit-btn');
                 const ogText = submitBtn.textContent;
                 submitBtn.textContent = "TRANSMITTING...";
                 submitBtn.style.pointerEvents = "none";
                 
                 try {
-                    const formData = new FormData(intakeForm);
-                    await fetch(intakeForm.action, {
+                    const formData = new FormData(dom.intakeForm);
+                    await fetch(dom.intakeForm.action, {
                         method: 'POST',
                         body: formData,
                         headers: { 'Accept': 'application/json' }
@@ -1101,8 +1100,8 @@
                         submitBtn.style.backgroundColor = "";
                         submitBtn.style.color = "";
                         submitBtn.style.pointerEvents = "auto";
-                        intakeForm.reset();
-                        closeModal();
+                        dom.intakeForm.reset();
+                        toggleModal(false);
                     }, 2500);
                 } catch(err) {
                     submitBtn.textContent = "TRANSMISSION FAILED";
@@ -1115,12 +1114,13 @@
                 }
             });
 
-            const inputs = document.querySelectorAll('input, textarea');
-            inputs.forEach(el => {
+            // Input Interactions
+            dom.inputs.forEach(el => {
                 el.addEventListener('mouseenter', () => document.body.classList.add('input-hover'));
                 el.addEventListener('mouseleave', () => document.body.classList.remove('input-hover'));
             });
 
+            // Gyroscope Logistics
             const handleGyro = (event) => {
                 if(!event.beta || !event.gamma) return;
                 sys.gyro.active = true;
@@ -1133,8 +1133,14 @@
                 } else window.addEventListener('deviceorientation', handleGyro);
             }, { once: true });
 
-            const canvas = document.getElementById('glcanvas');
-            const gl = canvas.getContext('webgl', { alpha: false, antialias: false });
+            // WebGL Orchestration
+            const gl = dom.canvas.getContext('webgl', { 
+                alpha: false, 
+                antialias: false,
+                depth: false,
+                powerPreference: "high-performance"
+            });
+            
             if (gl) {
                 const compile = (type, src) => {
                     const s = gl.createShader(type);
@@ -1147,6 +1153,7 @@
                 gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, document.getElementById('fs').textContent));
                 gl.linkProgram(prog);
                 gl.useProgram(prog);
+                
                 const posBuf = gl.createBuffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
                 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
@@ -1154,21 +1161,24 @@
                 gl.enableVertexAttribArray(posLoc);
                 gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
                 
-                const uRes = gl.getUniformLocation(prog, "u_res");
-                const uTime = gl.getUniformLocation(prog, "u_time");
-                const uMouse = gl.getUniformLocation(prog, "u_mouse");
-                const uGyro = gl.getUniformLocation(prog, "u_gyro");
-                const uScroll = gl.getUniformLocation(prog, "u_scroll");
-                const uVelo = gl.getUniformLocation(prog, "u_velo");
-                
-                const uAudioLow = gl.getUniformLocation(prog, "u_audio_low");
-                const uAudioHigh = gl.getUniformLocation(prog, "u_audio_high");
+                const uniforms = {
+                    res: gl.getUniformLocation(prog, "u_res"),
+                    time: gl.getUniformLocation(prog, "u_time"),
+                    mouse: gl.getUniformLocation(prog, "u_mouse"),
+                    gyro: gl.getUniformLocation(prog, "u_gyro"),
+                    scroll: gl.getUniformLocation(prog, "u_scroll"),
+                    velo: gl.getUniformLocation(prog, "u_velo"),
+                    audioLow: gl.getUniformLocation(prog, "u_audio_low"),
+                    audioHigh: gl.getUniformLocation(prog, "u_audio_high")
+                };
                 
                 const resize = () => {
-                    sys.screen.w = window.innerWidth; sys.screen.h = window.innerHeight;
-                    canvas.width = sys.screen.w; canvas.height = sys.screen.h;
+                    sys.screen.w = window.innerWidth; 
+                    sys.screen.h = window.innerHeight;
+                    dom.canvas.width = sys.screen.w; 
+                    dom.canvas.height = sys.screen.h;
                     gl.viewport(0, 0, sys.screen.w, sys.screen.h);
-                    gl.uniform2f(uRes, sys.screen.w, sys.screen.h);
+                    gl.uniform2f(uniforms.res, sys.screen.w, sys.screen.h);
                 };
                 window.addEventListener('resize', resize);
                 resize();
@@ -1177,39 +1187,39 @@
                     const now = Date.now();
                     sys.mouse.x += (sys.mouse.tx - sys.mouse.x) * 0.05;
                     sys.mouse.y += (sys.mouse.ty - sys.mouse.y) * 0.05;
-                    if(sys.gyro.active) {
+                    
+                    if (sys.gyro.active) {
                         sys.gyro.x += (sys.gyro.tx - sys.gyro.x) * 0.08;
                         sys.gyro.y += (sys.gyro.ty - sys.gyro.y) * 0.08;
                     }
-                    gl.uniform1f(uTime, (now - sys.time.start) / 1000.0);
-                    gl.uniform2f(uMouse, (sys.mouse.x/sys.screen.w)*2-1, -((sys.mouse.y/sys.screen.h)*2-1));
-                    gl.uniform2f(uGyro, sys.gyro.x, sys.gyro.y);
-                    gl.uniform1f(uScroll, sys.scroll.current);
-                    gl.uniform1f(uVelo, Math.abs(sys.scroll.velo));
                     
-                    // ELITE REFORGE: Feed the smoothed interpolation data to GPU, not raw jittery audio peaks
-                    gl.uniform1f(uAudioLow, sys.visualPulse.low);
-                    gl.uniform1f(uAudioHigh, sys.visualPulse.high);
+                    gl.uniform1f(uniforms.time, (now - sys.time.start) / 1000.0);
+                    gl.uniform2f(uniforms.mouse, (sys.mouse.x/sys.screen.w)*2-1, -((sys.mouse.y/sys.screen.h)*2-1));
+                    gl.uniform2f(uniforms.gyro, sys.gyro.x, sys.gyro.y);
+                    gl.uniform1f(uniforms.scroll, sys.scroll.current);
+                    gl.uniform1f(uniforms.velo, Math.abs(sys.scroll.velo));
+                    gl.uniform1f(uniforms.audioLow, sys.visualPulse.low);
+                    gl.uniform1f(uniforms.audioHigh, sys.visualPulse.high);
                     
                     gl.drawArrays(gl.TRIANGLES, 0, 6);
                 };
             }
 
-            const wrapper = document.getElementById('smooth-wrapper');
-            const dot = document.getElementById('cursor-dot');
-            const ring = document.getElementById('cursor-ring');
+            // Kinematics
             let cx = sys.screen.w/2, cy = sys.screen.h/2;
             let rx = cx, ry = cy;
             
             window.addEventListener('mousemove', (e) => {
-                sys.mouse.tx = e.clientX; sys.mouse.ty = e.clientY;
-                cx = e.clientX; cy = e.clientY;
-                dot.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%)) translateZ(0)`;
+                sys.mouse.tx = e.clientX; 
+                sys.mouse.ty = e.clientY;
+                cx = e.clientX; 
+                cy = e.clientY;
+                dom.dot.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%)) translateZ(0)`;
             });
             
-            document.querySelectorAll('.mag-wrap').forEach(wrap => {
+            dom.magWraps.forEach(wrap => {
                 const target = wrap.querySelector('.mag-target');
-                if(!target) return;
+                if (!target) return;
                 wrap.addEventListener('mousemove', (e) => {
                     const r = wrap.getBoundingClientRect();
                     target.style.transform = `translate(${(e.clientX - (r.left + r.width/2)) * 0.3}px, ${(e.clientY - (r.top + r.height/2)) * 0.3}px)`;
@@ -1217,55 +1227,43 @@
                 wrap.addEventListener('mouseleave', () => { target.style.transform = `translate(0,0)`; });
             });
             
-            document.querySelectorAll('[data-hover]').forEach(el => {
+            dom.hoverEls.forEach(el => {
                 el.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
                 el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
             });
-
-            const setHeight = () => { document.body.style.height = `${wrapper.getBoundingClientRect().height}px`; };
-            if (window.ResizeObserver) {
-                const ro = new ResizeObserver(setHeight);
-                ro.observe(wrapper);
-            } else {
-                window.addEventListener('resize', setHeight);
-                setTimeout(setHeight, 500);
-            }
             
+            // Native Window Sync
             window.addEventListener('scroll', () => { 
                 sys.scroll.target = window.scrollY; 
             }, { passive: true });
             
-            const loop = () => {
-                // HARD CLAMP: Prevent iOS/macOS rubber-band values from bleeding into the logic
-                const maxScroll = Math.max(0, wrapper.getBoundingClientRect().height - window.innerHeight);
-                sys.scroll.target = Math.max(0, Math.min(sys.scroll.target, maxScroll));
-
+            // Primary Render Cycle
+            const tick = () => {
                 const prev = sys.scroll.current;
-                sys.scroll.current += (sys.scroll.target - sys.scroll.current) * sys.scroll.ease;
                 
-                // ABSOLUTE VISUAL CLAMP: Guarantee the matrix transform never exceeds document boundaries
-                sys.scroll.current = Math.max(0, Math.min(sys.scroll.current, maxScroll));
+                // Track native scroll values purely for the WebGL parallax logic
+                sys.scroll.current += (sys.scroll.target - sys.scroll.current) * sys.scroll.ease;
                 sys.scroll.velo = sys.scroll.current - prev;
                 
-                // ELITE REFORGE: 1. Audio data decays natively
+                // Audio Data Decay & Smoothing
                 sys.audio.pulse.low += (0.0 - sys.audio.pulse.low) * 0.08;
                 sys.audio.pulse.high += (0.0 - sys.audio.pulse.high) * 0.12;
-                
-                // ELITE REFORGE: 2. Visual rendering data chases the audio data with an ease to prevent snapping. Smooth swell, crisp decay.
                 sys.visualPulse.low += (sys.audio.pulse.low - sys.visualPulse.low) * 0.25;
                 sys.visualPulse.high += (sys.audio.pulse.high - sys.visualPulse.high) * 0.3;
                 
-                if (!document.body.classList.contains('modal-open')) {
-                    wrapper.style.transform = `translate3d(0, ${-sys.scroll.current}px, 0)`;
-                }
+                // Cursor easing
+                rx += (cx - rx) * 0.15; 
+                ry += (cy - ry) * 0.15;
+                dom.ring.style.transform = `translate(calc(${rx}px - 50%), calc(${ry}px - 50%)) translateZ(0)`;
                 
-                rx += (cx - rx) * 0.15; ry += (cy - ry) * 0.15;
-                ring.style.transform = `translate(calc(${rx}px - 50%), calc(${ry}px - 50%)) translateZ(0)`;
+                // No JS DOM transform injection here. The browser scrolls normally.
                 
-                if(sys.renderGL) sys.renderGL();
-                requestAnimationFrame(loop);
+                if (sys.renderGL) sys.renderGL();
+                
+                requestAnimationFrame(tick);
             };
-            loop();
+            
+            tick();
         });
     </script>
 </body>

@@ -26,18 +26,22 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- SURGICAL OVERRIDE: PURE NATIVE SCROLL --- */
-        body, html {
-            width: 100%;
-            min-height: 100vh;
+        /* --- SURGICAL OVERRIDE: ROOT CONTEXT SEGREGATION --- */
+        html {
             background: var(--bg);
+            overscroll-behavior: none; /* Kills rubber-banding at the OS root level */
+        }
+
+        body {
+            width: 100%;
+            min-height: 100dvh;
             color: var(--fg);
             font-family: 'Space Mono', monospace;
-            overflow-x: hidden; 
+            overflow-x: hidden; /* Stops horizontal wobble. Applied ONLY to body to preserve mouse wheel */
         }
 
         body.modal-open {
-            overflow: hidden; /* Locks native scroll cleanly */
+            overflow: hidden; /* Locks native scroll cleanly when modal is active */
         }
 
         /* --- GPU RAYMARCH CANVAS --- */
@@ -589,7 +593,7 @@
 
             <section id="work">
                 <div class="label-tag mono">In Progress</div>
-                <h2 style="font-family: 'Permanent Marker', cursive; font-size: 4rem; color: var(--accent-cyan); transform: rotate(-2deg); margin-bottom: 1rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.8);">Current Projects</h2>
+                <h2 style="font-family: 'Permanent Marker', cursive; font-size: 4rem; color: var(--accent-cyan); transform: rotate(-2deg); margin-bottom: 1rem; text-shadow: 4px 4px 0px rgba(0,0,0,0.8);">Deployed Artifacts</h2>
                 
                 <div class="project-list">
                     <a href="https://bndrbots.github.io/resourcecite/#home" target="_blank" class="project-row" data-hover>
@@ -643,7 +647,7 @@
                     </div>
                     <div class="glass-panel">
                         <div class="mono" style="font-size: 0.95rem; line-height: 1.8;">
-                            <p style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 1rem; font-size: 1.2rem;">HQ</p>
+                            <p style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 1rem; font-size: 1.2rem;">HQ Coordinates</p>
                             <p>BNDR LLC</p>
                             <p>1896 East Innovation Park Drive, STE 100</p>
                             <p>Oro Valley, AZ 85755</p>
@@ -1032,7 +1036,7 @@
         }
 
         const sys = {
-            scroll: { current: 0, target: 0, ease: 0.1, velo: 0, scale: 1.0 },
+            scroll: { current: 0, target: 0, ease: 0.1, velo: 0, scale: 1.0, max: 0 },
             mouse: { x: 0, y: 0, tx: 0, ty: 0 },
             gyro: { x: 0, y: 0, tx: 0, ty: 0, active: false }, 
             screen: { w: window.innerWidth, h: window.innerHeight },
@@ -1232,9 +1236,20 @@
                 el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
             });
             
-            // Native Window Sync
+            // Native Window Sync & Mobile Rubber-Band Nullification
+            const updateBounds = () => {
+                sys.scroll.max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+            };
+            window.addEventListener('resize', updateBounds);
+            if (window.ResizeObserver) {
+                new ResizeObserver(updateBounds).observe(document.body);
+            } else {
+                setTimeout(updateBounds, 500);
+            }
+
             window.addEventListener('scroll', () => { 
-                sys.scroll.target = window.scrollY; 
+                // HARD CLAMP: Feeds safe coordinates to GPU even if OS tries to pull past the limits
+                sys.scroll.target = Math.max(0, Math.min(window.scrollY, sys.scroll.max)); 
             }, { passive: true });
             
             // Primary Render Cycle
